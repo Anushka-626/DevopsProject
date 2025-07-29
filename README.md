@@ -1,4 +1,4 @@
-# 🚀 Junior DevOps Portfolio Project
+# 🚀 Junior DevOps Project
 
 This project demonstrates a complete DevOps workflow:
 

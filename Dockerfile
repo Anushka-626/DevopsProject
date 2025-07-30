@@ -1,5 +1,17 @@
-FROM python:3.9
+# Use official Python image as base
+FROM python:3.9-slim
+
+# Set working directory
 WORKDIR /app
-COPY . .
-RUN pip install -r requirements.txt
+
+# Copy app files
+COPY app.py .
+
+# Install Flask
+RUN pip install Flask
+
+# Expose port
+EXPOSE 5000
+
+# Run the app
 CMD ["python", "app.py"]

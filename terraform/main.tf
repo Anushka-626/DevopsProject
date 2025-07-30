@@ -1,12 +1,27 @@
-provider "aws" {
-  region = "us-east-1"
+terraform {
+  required_providers {
+    docker = {
+      source  = "kreuzwerker/docker"
+      version = "~> 2.16.0"
+    }
+  }
 }
 
-resource "aws_instance" "example" {
-  ami           = "ami-0c55b159cbfafe1f0" # Update with a valid AMI
-  instance_type = "t2.micro"
+provider "docker" {}
 
-  tags = {
-    Name = "DevOpsTestInstance"
+resource "docker_image" "flask_app" {
+  name = "flask-app:latest"
+  build {
+    context    = "../app"
+    dockerfile = "Dockerfile"
+  }
+}
+
+resource "docker_container" "flask_app" {
+  image = docker_image.flask_app.latest
+  name  = "flask-app"
+  ports {
+    internal = 5000
+    external = 5000
   }
 }

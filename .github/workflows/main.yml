@@ -1,13 +1,32 @@
 name: CI/CD Pipeline
 
-on: [push]
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v2
-      - name: Build Docker Image
-        run: docker build -t flask-app .
-      - name: Run Container
-        run: docker run -d -p 5000:5000 flask-app
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build Docker image
+        run: docker build -t flask-app ./app
+
+      - name: Run Docker container
+        run: docker run -d -p 5000:5000 --name flask-app flask-app
+
+      - name: Run smoke test
+        run: |
+          sleep 5
+          curl -f http://localhost:5000 || exit 1
+
+      - name: Cleanup
+        run: docker stop flask-app && docker rm flask-app
